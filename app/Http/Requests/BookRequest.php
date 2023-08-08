@@ -32,27 +32,4 @@ class BookRequest extends FormRequest
         ];
     }
 
-    public function createBook(){
-        $validatedData = $this->validated();
-        $book = Auth::user()->books()->create([
-            'title' =>$validatedData['title'],
-            'author_name' =>$validatedData['author_name'],
-            'description' => $validatedData['description'],
-            'price' => $validatedData['price'],
-        ]);
-
-        $book->categories()->attach($validatedData['category_name']??[]);
-    }
-
-    public function messages(): array{
-        return [
-            'title.required' => 'The title field is required.',
-            'author_name.required' => 'The author name field is required.',
-            'description.required' => 'The description field is required.',
-            'price.required' => 'The price field is required.',
-            'price.numeric' => 'The price must be a numeric value.',
-            'category_name.required' => 'At least one category must be selected.',
-           
-        ];
-    }
 }

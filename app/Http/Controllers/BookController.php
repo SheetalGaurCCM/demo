@@ -31,8 +31,9 @@ class BookController extends Controller
     // Store a newly created book in the database
     public function store(BookRequest $request)
     {
-
-        $book=$request->createBook();
+        $validatedData = $request->validated();
+        $book = Auth::user()->books()->create($validatedData);
+        $book->categories()->attach($validatedData['category_name']??[]);
 
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
