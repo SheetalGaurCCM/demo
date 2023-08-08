@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Book;
+use Illuminate\Support\Facades\Auth;
 
-class CustomRequest extends FormRequest
+class BookRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,6 +30,18 @@ class CustomRequest extends FormRequest
             'price' => 'required|numeric',
             'category_name' => 'required|array',
         ];
+    }
+
+    public function createBook(){
+        $validatedData = $this->validated();
+        $book = Auth::user()->books()->create([
+            'title' =>$validatedData['title'],
+            'author_name' =>$validatedData['author_name'],
+            'description' => $validatedData['description'],
+            'price' => $validatedData['price'],
+        ]);
+
+        $book->categories()->attach($validatedData['category_name']??[]);
     }
 
     public function messages(): array{

@@ -24,7 +24,7 @@
     @enderror
     <br>
     <label for="price">Price</label>
-    <input type="text" name="price" id="price" value="{{ old('price', isset($book) ? $book->price : '') }}" >
+    <input type="number" name="price" id="price" value="{{ old('price', isset($book) ? $book->price : '') }}" >
     @error('price')
     <div class="text-danger">{{ $message }}</div>
     @enderror

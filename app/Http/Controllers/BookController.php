@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Http\Requests\CustomRequest;
+use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
@@ -29,17 +29,10 @@ class BookController extends Controller
     }
 
     // Store a newly created book in the database
-    public function store(CustomRequest $request)
+    public function store(BookRequest $request)
     {
 
-        $book = Auth::user()->books()->create([
-            'title' =>$request->input('title'),
-            'author_name' =>$request->input('author_name'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
-        ]);
-
-        $book->categories()->attach($request->input('category_name',[]));
+        $book=$request->createBook();
 
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
@@ -55,7 +48,7 @@ class BookController extends Controller
 
 
     // Update the specified book in the database
-    public function update(CustomRequest $request, $id)
+    public function update(BookRequest $request, $id)
     {
         $book = Book::findOrFail($id);
         $this->authorize('update',$book);
