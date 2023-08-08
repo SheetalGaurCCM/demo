@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    axios.delete(`http://127.0.0.1:8000/books/${bookId}`)
+                    axios.delete(`/books/${bookId}`)
                         .then(response => {
                             Swal.fire(
                                 'Deleted!',

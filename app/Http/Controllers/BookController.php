@@ -9,13 +9,15 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\CustomRequest;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
+    
     // Display a listing of the books
     public function index()
     {
-        $books = Book::all();
+        $books = Auth::user()->books;
         return view('books.index', compact('books'));
     }
 
@@ -29,9 +31,8 @@ class BookController extends Controller
     // Store a newly created book in the database
     public function store(CustomRequest $request)
     {
-        
 
-        $book = Book::create([
+        $book = Auth::user()->books()->create([
             'title' =>$request->input('title'),
             'author_name' =>$request->input('author_name'),
             'description' => $request->input('description'),
@@ -46,6 +47,7 @@ class BookController extends Controller
     // Show the form for editing the specified book
     public function edit(Book $book)
     {
+        $this->authorize('update',$book);
         $categories = Category::all(); 
 
         return view('books.edit', compact('book', 'categories'));
@@ -55,9 +57,9 @@ class BookController extends Controller
     // Update the specified book in the database
     public function update(CustomRequest $request, $id)
     {
-        
-
         $book = Book::findOrFail($id);
+        $this->authorize('update',$book);
+        
 
         $book->update([
             'title' => $request->input('title'),
@@ -77,7 +79,9 @@ class BookController extends Controller
 
 
         try {
+            
             $book = Book::findOrFail($id);
+            $this->authorize('delete',$book);
             $book->categories()->detach();
 
         // Delete the book

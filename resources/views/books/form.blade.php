@@ -17,7 +17,8 @@
     @enderror
     <br>
     <label for="description">Description</label>
-    <input type="text" name="description" id="description" value="{{ old('description', isset($book) ? $book->description : '') }}" >
+    
+    <textarea name="description" id="description" required>{{ old('description', isset($book) ? $book->description : '') }}</textarea>
     @error('description')
     <div class="text-danger">{{ $message }}</div>
     @enderror

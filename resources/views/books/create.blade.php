@@ -5,6 +5,6 @@
 @section('content')
     <div class="container">
         <h1>Create a New Book</h1>
-        @include('books.form',['formAction'=>route('books.store')])
+        @include('books.form', ['formAction' => route('books.store')])
     </div>
 @endsection
