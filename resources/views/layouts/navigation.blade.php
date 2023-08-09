@@ -21,6 +21,15 @@
                         {{ __('Books') }}
                     </x-nav-link>
                 </div>
+
+                @if(auth()->user()->id===1)
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('books.authors')" :active="request()->routeIs('books.authors')">
+                        {{ __('Authors') }}
+                    </x-nav-link>
+                </div>
+                @endif
+
             </div>
 
             <!-- Settings Dropdown -->

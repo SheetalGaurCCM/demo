@@ -28,6 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('/books', BookController::class);
+    Route::get('/authors', [BookController::class, 'authors'])
+    ->name('books.authors')
+    ->middleware('author.access');
 });
 
 
