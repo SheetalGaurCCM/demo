@@ -5,7 +5,31 @@
 @section('content')
     <div class="container">
         <h1>Books</h1>
-        <a href="{{ route('books.create') }}" class="btn btn-primary">Add New Book</a>
+        <div class="d-flex">
+            <a href="{{ route('books.create') }}" class="btn btn-primary" style="margin:5px;">Add New Book</a>
+            <form action="/search" method="get">
+                <input type="text" name="author_name" placeholder="Search by Author" value="{{ isset($author_name)? $author_name : '' }}">
+                <button type="submit" class="btn" style="background-color:#0d6efd;color:white;">Search</button>
+            </form>
+
+            <form action="/searchCategory" method="get">
+                <select name="category_id" id="category_id" >
+                <option value="">All</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">
+                        {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit" class="btn" style="background-color:#0d6efd;color:white;">Search</button>
+            </form>
+           
+
+            
+        </div>
+        
+      
+        
         <table class="table">
             <thead>
                 <tr>
