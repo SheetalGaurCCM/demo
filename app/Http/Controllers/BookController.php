@@ -10,6 +10,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\BookAdded;
 
 class BookController extends Controller
 {
@@ -23,17 +24,16 @@ class BookController extends Controller
         $author_name = $request->input('author_name', null); 
         $category_id = $request->input('category_id', null); 
 
-        $query = Book::where('user_id', Auth::id());
-
-        if ($author_name !== null) {
+        $query = Book::where('user_id', Auth::id())
+        ->when($author_name !== null, function($query)  use ($author_name){
             $query->where('author_name', 'like', "%$author_name%");
-        }
-
-        if ($category_id !== null) {
+        })
+        ->when($category_id !== null, function($query){
             $query->whereHas('categories', function ($query) use ($category_id) {
                 $query->where('categories.id', $category_id);
             });
-        }
+        });
+
 
         $books = $query->paginate(5);
         
@@ -58,7 +58,8 @@ class BookController extends Controller
         $validatedData = $request->validated();
         $book = Auth::user()->books()->create($validatedData);
         $book->categories()->attach($validatedData['category_name']??[]);
-
+        $user=Auth::user();
+        $user->notify(new BookAdded($book));
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
 
