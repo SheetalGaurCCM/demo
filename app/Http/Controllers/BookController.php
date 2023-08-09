@@ -35,8 +35,8 @@ class BookController extends Controller
             });
         }
 
-        $books = $query->get();
-
+        $books = $query->paginate(5);
+        
         return view('books.index', compact('books', 'categories', 'author_name', 'category_id', 'uniqueAuthors'));
     }
 
