@@ -7,21 +7,25 @@
         <h1>Books</h1>
         <div class="d-flex">
             <a href="{{ route('books.create') }}" class="btn btn-primary" style="margin:5px;">Add New Book</a>
-            <form action="/search" method="get">
-                <input type="text" name="author_name" placeholder="Search by Author" value="{{ isset($author_name)? $author_name : '' }}">
-                <button type="submit" class="btn" style="background-color:#0d6efd;color:white;">Search</button>
-            </form>
-
-            <form action="/searchCategory" method="get">
-                <select name="category_id" id="category_id" >
-                <option value="">All</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">
-                        {{ $category->name }}
+ 
+            <form action="{{ route('books.index') }}" method="get" id="filter">
+                <select name="author_name" id="author_name">
+                    <option value="">All Authors</option>
+                    @foreach ($uniqueAuthors as $author)
+                        <option value="{{ $author }}"{{ $author_name === $author ? 'selected' : '' }}>
+                            {{ $author }}
                         </option>
                     @endforeach
                 </select>
-                <button type="submit" class="btn" style="background-color:#0d6efd;color:white;">Search</button>
+
+                <select name="category_id" id="category_id">
+                    <option value="">All Categories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}"{{ $category_id == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
             </form>
            
 
@@ -105,6 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+document.querySelectorAll('#author_name, #category_id').forEach(dropdown => {
+    dropdown.addEventListener('change', () => {
+        document.querySelector('#filter').submit();
+    });
+});
 
 
 </script>

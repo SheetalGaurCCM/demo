@@ -15,34 +15,30 @@ class BookController extends Controller
 {
     
     // Display a listing of the books
-    public function index()
-    {
+    public function index(Request $request)
+    {      
         $categories = Category::all();
-        $books = Auth::user()->books;
-        return view('books.index', compact('books','categories'));
-    }
+        $uniqueAuthors = Book::where('user_id', Auth::id())->distinct('author_name')->pluck('author_name');
 
-    public function searchByAuthor(Request $request){
-        
-        $categories = Category::all();
-        $author_name=$request->author_name;
-        $books=Book::where(function($query) use ($author_name){
-            $query->where('author_name','like',"%$author_name%");
-        })->get();
-        return view('books.index',compact('books','author_name','categories'));
-    }
+        $author_name = $request->input('author_name', null); 
+        $category_id = $request->input('category_id', null); 
 
-    public function searchCategory(Request $request)
-    {
-        $categories = Category::all();
-        $category_id = $request->category_id;
-        $books = Book::whereHas('categories', function($query) use ($category_id) {
-            $query->where('categories.id', $category_id);
-        })->get();
-       
-        return view('books.index', compact('books', 'category_id', 'categories'));
-    }
+        $query = Book::where('user_id', Auth::id());
 
+        if ($author_name !== null) {
+            $query->where('author_name', 'like', "%$author_name%");
+        }
+
+        if ($category_id !== null) {
+            $query->whereHas('categories', function ($query) use ($category_id) {
+                $query->where('categories.id', $category_id);
+            });
+        }
+
+        $books = $query->get();
+
+        return view('books.index', compact('books', 'categories', 'author_name', 'category_id', 'uniqueAuthors'));
+    }
 
     // Show the form for creating a new book
     public function create()
