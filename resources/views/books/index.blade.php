@@ -28,7 +28,11 @@
                 </select>
             </form>
            
-            <a href="{{ route('books.create') }}" class="btn btn-primary" style="margin:5px;">Import File</a>
+            <form action="{{ route('books.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="file">
+                <button type="submit" class="btn" style="background-color:#0d6efd; color:white">Import</button>
+            </form>
             
         </div>
         

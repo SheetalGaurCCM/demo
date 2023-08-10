@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\BookAdded;
+use App\Imports\BookImport;
+use Illuminate\Support\Facades\Validator;
+
+use Excel;
 
 class BookController extends Controller
 {
@@ -62,6 +66,25 @@ class BookController extends Controller
         $user->notify(new BookAdded($book));
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
+
+    public function import(Request $request)
+    {
+   
+
+        $validator = Validator::make($request->all(), [
+            'file' => 'file|mimetypes:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/excel',
+        ]);
+    
+        if ($validator->fails()) {
+            // Validation failed, handle errors here
+            return redirect()->back()->withErrors($validator);
+        }
+        
+        Excel::import(new BookImport, $request->file);
+        return redirect()->route('books.index')->with('success', 'Books Imported Successfully');
+    }
+
+
 
     // Show the form for editing the specified book
     public function edit(Book $book)

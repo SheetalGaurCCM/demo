@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/authors', [BookController::class, 'authors'])
     ->name('books.authors')
     ->middleware('author.access');
+    Route::post('/books/import',[BookController::class,'import'])->name('books.import');
 });
 
 
