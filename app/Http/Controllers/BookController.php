@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Notifications\BookAdded;
 use App\Imports\BookImport;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 use Excel;
 
@@ -59,7 +60,19 @@ class BookController extends Controller
     // Store a newly created book in the database
     public function store(BookRequest $request)
     {
+
         $validatedData = $request->validated();
+        
+        if($request->hasFile('image')){
+            $filenameWithExt = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+           
+        } 
+
+        $validatedData['image'] = $fileNameToStore;
         $book = Auth::user()->books()->create($validatedData);
         $book->categories()->attach($validatedData['category_name']??[]);
         $user=Auth::user();
@@ -79,7 +92,7 @@ class BookController extends Controller
             // Validation failed, handle errors here
             return redirect()->back()->withErrors($validator);
         }
-        
+
         Excel::import(new BookImport, $request->file);
         return redirect()->route('books.index')->with('success', 'Books Imported Successfully');
     }
@@ -100,20 +113,38 @@ class BookController extends Controller
     public function update(BookRequest $request, $id)
     {
         $book = Book::findOrFail($id);
-        $this->authorize('update',$book);
-        
+        $this->authorize('update', $book);
+
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $filenameWithExt = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+
+            // Delete the previous image if it exists
+            if ($book->image && Storage::exists('public/images/' . $book->image)) {
+                Storage::delete('public/images/' . $book->image);
+            }
+
+            $validatedData['image'] = $fileNameToStore;
+        }
 
         $book->update([
-            'title' => $request->input('title'),
-            'author_name' => $request->input('author_name'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
+            'title' => $validatedData['title'],
+            'author_name' => $validatedData['author_name'],
+            'description' => $validatedData['description'],
+            'price' => $validatedData['price'],
+            'image' => $validatedData['image'], // Update the image field
         ]);
 
-        $book->categories()->sync( $request->input('category_name',[]));
+        $book->categories()->sync($validatedData['category_name'] ?? []);
 
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
+
 
     // Remove the specified book from the database
     public function destroy($id)

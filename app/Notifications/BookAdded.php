@@ -41,7 +41,7 @@ class BookAdded extends Notification
         return (new MailMessage)
                     ->subject('A New Book is Added')
                     ->line('Book Details are as follows: ')
-                    ->line('Title: '.$thisj->book->titleu)
+                    ->line('Title: '.$this->book->title)
                     ->line('Author Name: '. $this->book->author_name)
                     ->line('Description: '. $this->book->description)
                     ->line('Price: '.$this->book->price)

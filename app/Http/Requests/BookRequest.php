@@ -24,6 +24,7 @@ class BookRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10000',
             'title' => 'required|max:255',
             'author_name' => 'required|max:255',
             'description' => 'required',

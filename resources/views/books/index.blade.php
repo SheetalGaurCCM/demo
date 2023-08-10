@@ -41,6 +41,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Image</th>
                     <th>Title</th>
                     <th>Author</th>
                     <th>Price</th>
@@ -51,6 +52,7 @@
             <tbody>
                 @foreach($books as $book)
                 <tr>
+                    <td><img src="{{ asset('storage/images/'.$book->image) }}" alt="{{$book->image}}" style="height:40px;"></td>
                     <td>{{ $book->title }}</td>
                     <td>{{ $book->author_name }}</td>
                     <td>${{ number_format($book->price) }}</td>
@@ -120,6 +122,8 @@ document.querySelectorAll('#author_name, #category_id').forEach(dropdown => {
         document.querySelector('#filter').submit();
     });
 });
+
+
 
 
 </script>

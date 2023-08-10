@@ -10,7 +10,7 @@ class Book extends Model
     use HasFactory;
     protected $table='books';
     protected $primaryKey='id';
-    protected $fillable = ['title','author_name','description','price','user_id'];
+    protected $fillable = ['image','title','author_name','description','price','user_id'];
     public function categories()
     {
         return $this->belongsToMany(Category::class);

@@ -1,10 +1,15 @@
 
-<form action="{{ $formAction }}" method="POST">
+<form action="{{ $formAction }}" method="POST" enctype="multipart/form-data">
     @csrf
     @if(isset($book))
         @method('PUT')
     @endif
-   
+    <label for="image">Image</label>
+    @error('image')
+    <div class="text-danger">{{ $message }}</div>
+    @enderror
+    <input type="file" name="image" id="image">
+    <br>
     <label for="title">Title</label>
     <input type="text" name="title" id="title" value="{{ old('title', isset($book) ? $book->title : '') }}" >
     @error('title')
