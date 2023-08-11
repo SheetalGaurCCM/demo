@@ -15,7 +15,7 @@ use App\Imports\BookImport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Excel;
 
 class BookController extends Controller
@@ -39,10 +39,32 @@ class BookController extends Controller
                 $query->where('categories.id', $category_id);
             });
         }); 
-
+        
         $books = $query->paginate(5);
         
         return view('books.index', compact('books', 'categories', 'author_name', 'category_id', 'uniqueAuthors'));
+    }
+
+    
+    public function exportPdf(Request $request)
+    {
+        $author_name = $request->input('author_name', null); 
+        $category_id = $request->input('category_id', null); 
+
+        $query = Book::where('user_id', Auth::id())
+            ->when($author_name !== null, function ($query) use ($author_name) {
+                $query->where('author_name', 'like', "%$author_name%");
+            })
+            ->when($category_id !== null, function ($query) use ($category_id) {
+                $query->whereHas('categories', function ($query) use ($category_id) {
+                    $query->where('categories.id', $category_id);
+                });
+            }); 
+
+        $books = $query->get();
+
+        $pdf = SnappyPdf::loadView('pdf.books', compact('books'));
+        return $pdf->download('books.pdf');
     }
 
     // Show the form for creating a new book

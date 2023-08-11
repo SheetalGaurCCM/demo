@@ -33,7 +33,10 @@
                 <input type="file" name="file">
                 <button type="submit" class="btn" style="background-color:#0d6efd; color:white">Import</button>
             </form>
-            
+
+            <a href="{{ route('books.exportPdf') }}" class="btn btn-primary">Export PDF</a>
+
+
         </div>
         
       

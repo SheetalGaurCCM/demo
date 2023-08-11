@@ -27,11 +27,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('/books', BookController::class);
+    Route::resource('/books', BookController::class,['only'=> ['index','create','store','destory','edit','update']]);
     Route::get('/authors', [BookController::class, 'authors'])
     ->name('books.authors')
     ->middleware('author.access');
     Route::post('/books/import',[BookController::class,'import'])->name('books.import');
+    Route::get('/books/exportPdf', [BookController::class, 'exportPdf'])->name('books.exportPdf');
+
+
 });
 
 

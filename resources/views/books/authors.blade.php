@@ -24,8 +24,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const authorNames = @json($authorNames);
         const bookCounts = @json($booksCount);
-        console.log(authorNames);
-        console.log(bookCounts);
+        
         var ctx = document.getElementById('authorBooksChart').getContext('2d');
         var chart = new Chart(ctx, {
             type: 'bar',
