@@ -14,6 +14,7 @@ use App\Notifications\BookAdded;
 use App\Imports\BookImport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 use Excel;
 
@@ -37,8 +38,7 @@ class BookController extends Controller
             $query->whereHas('categories', function ($query) use ($category_id) {
                 $query->where('categories.id', $category_id);
             });
-        });
-
+        }); 
 
         $books = $query->paginate(5);
         
@@ -53,8 +53,10 @@ class BookController extends Controller
     }
 
     public function authors(){
-        $books=Book::all();
-        return view('books.authors',compact('books'));
+        $authors=Book::select('author_name',DB::raw('count(*) as books_count'))->groupby('author_name')->get();
+        $authorNames=$authors->pluck('author_name');
+        $booksCount=$authors->pluck('books_count');
+        return view('books.authors',compact('authorNames','booksCount'));
     }
 
     // Store a newly created book in the database
