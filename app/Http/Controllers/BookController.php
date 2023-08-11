@@ -53,7 +53,8 @@ class BookController extends Controller
     }
 
     public function authors(){
-        $authors=Book::select('author_name',DB::raw('count(*) as books_count'))->groupby('author_name')->get();
+        $authors=Book::select('author_name',DB::raw('count(*) as books_count'))->groupby('author_name')
+        ->orderby('books_count','desc')->limit(5)->get();
         $authorNames=$authors->pluck('author_name');
         $booksCount=$authors->pluck('books_count');
         return view('books.authors',compact('authorNames','booksCount'));
@@ -125,7 +126,7 @@ class BookController extends Controller
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('image')->getClientOriginalExtension();
             $fileNameToStore = $filename . '_' . time() . '.' . $extension;
-            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+           $request->file('image')->storeAs('public/images', $fileNameToStore);
 
             // Delete the previous image if it exists
             if ($book->image && Storage::exists('public/images/' . $book->image)) {
