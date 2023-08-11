@@ -60,7 +60,7 @@ class BookController extends Controller
     // Store a newly created book in the database
     public function store(BookRequest $request)
     {
-
+        
         $validatedData = $request->validated();
         
         if($request->hasFile('image')){
@@ -112,6 +112,7 @@ class BookController extends Controller
     // Update the specified book in the database
     public function update(BookRequest $request, $id)
     {
+        
         $book = Book::findOrFail($id);
         $this->authorize('update', $book);
 
@@ -156,7 +157,9 @@ class BookController extends Controller
             $book = Book::findOrFail($id);
             $this->authorize('delete',$book);
             $book->categories()->detach();
-
+            if ($book->image && Storage::exists('public/images/' . $book->image)) {
+                Storage::delete('public/images/' . $book->image);
+            }
         // Delete the book
         $book->delete();
     
